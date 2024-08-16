@@ -65,18 +65,21 @@
             </td>
             <td class="p-4 border-b flex">
               <button
+                @click="viewDetails(post.id)"
                 class="text-blue-500 flex items-center p-2 hover:text-blue-600 rounded-full"
               >
                 <Icon name="mage:preview" size="20px" />
               </button>
               <button
                 v-if="post.status === 'UNDER_REVIEW'"
+                @click="approvePost(post.id)"
                 class="text-green-500 ml-4 flex justify-center p-2 items-center hover:text-green-600 rounded-full"
               >
                 <Icon name="material-symbols:check-rounded" size="20px" />
               </button>
               <button
                 v-if="post.status === 'UNDER_REVIEW'"
+                @click="rejectPost(post.id)"
                 class="text-red-500 ml-4 flex justify-center p-2 items-center hover:text-red-600 rounded-full"
               >
                 <Icon
@@ -99,6 +102,14 @@ const store = useAdminStore();
 const { $axios } = useNuxtApp();
 const posts = ref([]);
 
+// const viewDetails = async(id)=>{
+//   try{
+//     const res = await $axios.get()
+//   } catch(error){
+//     console.log(error.response? error.response.data : error.message);
+//   }
+// }
+
 onMounted(async () => {
   try {
     const res = await $axios.get("/post/advanced", {
@@ -112,6 +123,45 @@ onMounted(async () => {
     console.log(err.res ? err.res.data : err.message);
   }
 });
+
+const approvePost = async (id) => {
+  console.log(id);
+  try {
+    const res = await $axios.post(`/post/status/${id}`, null, {
+      params: { status: "OPEN" },
+      headers: {
+        Authorization: `Bearer ${store.token}`,
+      },
+    });
+    console.log("success", res);
+    // Update the post status locally
+    const post = posts.value.find((p) => p.id === id);
+    if (post) {
+      post.status = "OPEN";
+    }
+  } catch (error) {
+    console.log(error.response ? error.response.data : error.message);
+  }
+};
+
+const rejectPost = async (id) => {
+  try {
+    const res = await $axios.post(`/post/status/${id}`, null, {
+      params: { status: "REJECTED" },
+      headers: {
+        Authorization: `Bearer ${store.token}`,
+      },
+    });
+    console.log("success", res);
+    // Update the post status locally
+    const post = posts.value.find((p) => p.id === id);
+    if (post) {
+      post.status = "REJECTED";
+    }
+  } catch (error) {
+    console.log(error.response ? error.response.data : error.message);
+  }
+};
 
 const setStatus = (status) => {
   if (status === "OPEN") return "Approved";
@@ -146,6 +196,7 @@ const filteredPosts = computed(() => {
     return matchesSearch && matchesStatus;
   });
 });
+
 function formatDate(dateStr) {
   const dateObj = new Date(dateStr);
 
