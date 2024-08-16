@@ -27,43 +27,37 @@
       <table class="min-w-full bg-white border">
         <thead>
           <tr class="w-full bg-gray-200">
-            <th class="text-left p-4 border-b">Reporter</th>
+            <th class="text-left p-4 border-b whitespace-nowrap">First Name</th>
             <th class="text-left p-4 border-b whitespace-nowrap">
-              Missing Person
+              Middle Name
             </th>
-            <th class="text-left p-4 border-b">Date</th>
-            <th class="text-left p-4 border-b">Status</th>
-            <th class="text-left p-4 border-b">Actions</th>
+            <th class="text-left p-4 border-b whitespace-nowrap">Last Name</th>
+            <th class="text-left p-4 border-b">Gender</th>
+            <th class="text-left p-4 border-b">Country</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="post in filteredPosts"
-            :key="post.id"
+            v-for="user in filteredUsers"
+            :key="user.id"
             class="hover:bg-gray-100"
           >
             <td class="p-4 border-b">
-              {{
-                `${post.user.Profile.firstName} ${post.user.Profile.lastName}`
-              }}
+              {{ `${user.firstName}` }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
-              {{ `${post.firstName} ${post.middleName} ${post.lastName}` }}
+              {{ `${user.middleName}` }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
-              {{ formatDate(post.lastSeenDate) }}
+              {{ `${user.lastName}` }}
             </td>
-            <td
-              :class="{
-                'text-yellow-500': post.status === 'UNDER_REVIEW',
-                'text-green-500': post.status === 'OPEN',
-                'text-red-500': post.status === 'REJECTED',
-              }"
-              class="p-4 border-b"
-            >
-              {{ setStatus(post.status) }}
+            <td class="p-4 border-b whitespace-nowrap">
+              {{ `${user.gender}` }}
             </td>
-            <td class="p-4 border-b flex">
+            <td class="p-4 border-b whitespace-nowrap">
+              {{ `${user.country}` }}
+            </td>
+            <!-- <td class="p-4 border-b flex">
               <button
                 class="text-blue-500 flex items-center p-2 hover:text-blue-600 rounded-full"
               >
@@ -84,7 +78,7 @@
                   size="20px"
                 />
               </button>
-            </td>
+            </td> -->
           </tr>
         </tbody>
       </table>
@@ -97,48 +91,36 @@ import { useAdminStore } from "~/stores/store";
 
 const store = useAdminStore();
 const { $axios } = useNuxtApp();
-const posts = ref([]);
+const users = ref([]);
 
 onMounted(async () => {
   try {
-    const res = await $axios.get("/post/advanced", {
+    const res = await $axios.get("/user/profiles/all", {
       headers: {
         Authorization: `Bearer ${store.token}`,
       },
     });
-    posts.value = res.data.data;
+    users.value = res.data.data;
     console.log("success", res.data);
   } catch (err) {
     console.log(err.res ? err.res.data : err.message);
   }
 });
 
-const setStatus = (status) => {
-  if (status === "OPEN") return "Approved";
-  if (status === "UNDER_REVIEW") return "Pending";
-  if (status === "REJECTED") return "Rejected";
-};
-
 // Search and Filter States
 const searchQuery = ref("");
 const filterStatus = ref("");
 
 // Computed property for filtered posts
-const filteredPosts = computed(() => {
-  return posts.value.filter((post) => {
+const filteredUsers = computed(() => {
+  return users.value.filter((user) => {
     const matchesSearch =
-      post.user.Profile.firstName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.middleName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.lastName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
+      user.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
 
     const matchesStatus =
       filterStatus.value === "" || post.status === filterStatus.value;
