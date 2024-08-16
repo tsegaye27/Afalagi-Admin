@@ -8,14 +8,17 @@
         v-model="searchQuery"
         type="text"
         placeholder="Search files..."
-        class="border rounded p-2 w-1/3"
+        class="border rounded outline-none p-2 w-1/3"
       />
 
-      <select v-model="filterStatus" class="border rounded p-2 w-1/4">
+      <select
+        v-model="filterStatus"
+        class="border outline-none rounded p-2 w-1/4"
+      >
         <option value="">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="Rejected">Rejected</option>
+        <option value="UNDER_REVIEW">Pending</option>
+        <option value="OPEN">Approved</option>
+        <option value="REJECTED">Rejected</option>
       </select>
     </div>
 
@@ -38,7 +41,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="post in posts" :key="post.id" class="hover:bg-gray-100">
+          <tr
+            v-for="post in filteredPosts"
+            :key="post.id"
+            class="hover:bg-gray-100"
+          >
             <td class="p-4 border-b whitespace-nowrap">
               {{
                 `${post.user.Profile.firstName} ${post.user.Profile.middleName} ${post.user.Profile.lastName}`
@@ -64,9 +71,27 @@
             <td class="p-4 border-b whitespace-nowrap">
               {{ post.legalDocuments }}
             </td>
-            <td class="p-4 border-b whitespace-nowrap">
-              <button class="text-blue-500 hover:underline">View</button>
-              <button class="text-red-500 hover:underline ml-4">Delete</button>
+            <td class="p-4 border-b flex">
+              <button
+                class="text-blue-500 flex items-center p-2 hover:text-blue-600 rounded-full"
+              >
+                <Icon name="mage:preview" size="20px" />
+              </button>
+              <button
+                v-if="post.status === 'UNDER_REVIEW'"
+                class="text-green-500 ml-4 flex justify-center p-2 items-center hover:text-green-600 rounded-full"
+              >
+                <Icon name="material-symbols:check-rounded" size="20px" />
+              </button>
+              <button
+                v-if="post.status === 'UNDER_REVIEW'"
+                class="text-red-500 ml-4 flex justify-center p-2 items-center hover:text-red-600 rounded-full"
+              >
+                <Icon
+                  name="material-symbols:delete-outline-rounded"
+                  size="20px"
+                />
+              </button>
             </td>
           </tr>
         </tbody>
@@ -105,6 +130,29 @@ const setStatus = (status) => {
 // Search and Filter States
 const searchQuery = ref("");
 const filterStatus = ref("");
+
+const filteredPosts = computed(() => {
+  return posts.value.filter((post) => {
+    const matchesSearch =
+      post.user.Profile.firstName
+        .toLowerCase()
+        .includes(searchQuery.value.toLowerCase()) ||
+      post.user.Profile.middleName
+        .toLowerCase()
+        .includes(searchQuery.value.toLowerCase()) ||
+      post.user.Profile.lastName
+        .toLowerCase()
+        .includes(searchQuery.value.toLowerCase()) ||
+      post.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      post.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      post.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
+
+    const matchesStatus =
+      filterStatus.value === "" || post.status === filterStatus.value;
+
+    return matchesSearch && matchesStatus;
+  });
+});
 
 function formatDate(dateStr) {
   const dateObj = new Date(dateStr);

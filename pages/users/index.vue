@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-4">Posts</h1>
+    <h1 class="text-2xl font-bold mb-4">Users</h1>
 
     <!-- Search and Filter -->
     <div class="flex justify-between items-center mb-4">
@@ -8,7 +8,7 @@
         v-model="searchQuery"
         type="text"
         placeholder="Search posts..."
-        class="border outline-none rounded p-2 w-1/3"
+        class="border rounded outline-none p-2 w-1/3"
       />
 
       <select
