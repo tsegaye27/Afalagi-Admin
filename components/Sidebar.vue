@@ -5,6 +5,12 @@ const store = useAdminStore();
 onMounted(() => {
   if (!store.token) navigateTo("/auth/login");
 });
+
+const logout = () => {
+  store.setToken();
+  store.setRefreshToken();
+  navigateTo("/auth/login");
+};
 </script>
 <template>
   <div
@@ -101,6 +107,7 @@ onMounted(() => {
           </li>
         </nuxt-link>
         <li
+          @click="logout"
           class="cursor-pointer flex gap-2 items-center hover:bg-[#e5e7eb] rounded-lg p-2 transition-all"
         >
           <span class="flex text-[var(--secondary-color)]">

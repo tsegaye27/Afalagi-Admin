@@ -4,10 +4,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  value: {
-    type: String,
-    required: true,
-  },
+  value: Number,
 });
 </script>
 <template>
