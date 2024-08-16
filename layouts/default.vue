@@ -2,9 +2,11 @@
   <div class="bg-[#fafafb] h-screen">
     <TopBar class="bg-white" />
     <hr />
-    <div class="flex gap-12">
+    <div class="flex gap-28">
       <Sidebar />
-      <slot />
+      <div class="overflow-auto">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
