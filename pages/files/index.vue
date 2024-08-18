@@ -48,7 +48,7 @@
           >
             <td class="p-4 border-b whitespace-nowrap">
               {{
-                `${post.user.Profile.firstName} ${post.user.Profile.middleName} ${post.user.Profile.lastName}`
+                `${post.user.Profile?.firstName} ${post.user.Profile?.middleName} ${post.user.Profile?.lastName}`
               }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
@@ -134,13 +134,13 @@ const filterStatus = ref("");
 const filteredPosts = computed(() => {
   return posts.value.filter((post) => {
     const matchesSearch =
-      post.user.Profile.firstName
+      post.user.Profile?.firstName
         .toLowerCase()
         .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.middleName
+      post.user.Profile?.middleName
         .toLowerCase()
         .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.lastName
+      post.user.Profile?.lastName
         .toLowerCase()
         .includes(searchQuery.value.toLowerCase()) ||
       post.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||

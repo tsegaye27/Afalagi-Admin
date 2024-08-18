@@ -38,13 +38,14 @@
         </thead>
         <tbody>
           <tr
-            v-for="post in filteredPosts"
+            v-for="post in posts"
             :key="post.id"
             class="hover:bg-gray-100"
           >
             <td class="p-4 border-b">
               {{
-                `${post.user.Profile.firstName} ${post.user.Profile.lastName}`
+                `${post.user.Profile?.firstName} ${post.user.Profile?.lastName}`
+                
               }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
@@ -136,9 +137,9 @@ const approvePost = async (id) => {
     console.log("success", res);
     // Update the post status locally
     const post = posts.value.find((p) => p.id === id);
-    if (post) {
-      post.status = "OPEN";
-    }
+    //if (post) {
+     //post.status = "OPEN";
+    //}
   } catch (error) {
     console.log(error.response ? error.response.data : error.message);
   }
@@ -174,28 +175,28 @@ const searchQuery = ref("");
 const filterStatus = ref("");
 
 // Computed property for filtered posts
-const filteredPosts = computed(() => {
-  return posts.value.filter((post) => {
-    const matchesSearch =
-      post.user.Profile.firstName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.middleName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.lastName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
+// const filteredPosts = computed(() => {
+//   return posts.value.filter((post) => {
+//     const matchesSearch =
+//       post.user.Profile.firstName
+//         .toLowerCase()
+//         .includes(searchQuery.value.toLowerCase()) ||
+//       post.user.Profile.middleName
+//         .toLowerCase()
+//         .includes(searchQuery.value.toLowerCase()) ||
+//       post.user.Profile.lastName
+//         .toLowerCase()
+//         .includes(searchQuery.value.toLowerCase()) ||
+//       post.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//       post.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//       post.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-    const matchesStatus =
-      filterStatus.value === "" || post.status === filterStatus.value;
+//     const matchesStatus =
+//       filterStatus.value === "" || post.status === filterStatus.value;
 
-    return matchesSearch && matchesStatus;
-  });
-});
+//     return matchesSearch && matchesStatus;
+//   });
+// });
 
 function formatDate(dateStr) {
   const dateObj = new Date(dateStr);
