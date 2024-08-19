@@ -37,15 +37,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="post in posts"
-            :key="post.id"
-            class="hover:bg-gray-100"
-          >
+          <tr v-for="post in posts" :key="post.id" class="hover:bg-gray-100">
             <td class="p-4 border-b">
               {{
                 `${post.user.Profile?.firstName} ${post.user.Profile?.lastName}`
-                
               }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
@@ -66,12 +61,14 @@
             </td>
             <td class="p-4 border-b flex">
               <button
+                title="View Post"
                 @click="viewDetails(post.id)"
                 class="text-blue-500 flex items-center p-2 hover:text-blue-600 rounded-full"
               >
                 <Icon name="mage:preview" size="20px" />
               </button>
               <button
+                title="Approve Post"
                 v-if="post.status === 'UNDER_REVIEW'"
                 @click="approvePost(post.id)"
                 class="text-green-500 ml-4 flex justify-center p-2 items-center hover:text-green-600 rounded-full"
@@ -79,6 +76,7 @@
                 <Icon name="material-symbols:check-rounded" size="20px" />
               </button>
               <button
+                title="Reject Post"
                 v-if="post.status === 'UNDER_REVIEW'"
                 @click="rejectPost(post.id)"
                 class="text-red-500 ml-4 flex justify-center p-2 items-center hover:text-red-600 rounded-full"
@@ -138,7 +136,7 @@ const approvePost = async (id) => {
     // Update the post status locally
     const post = posts.value.find((p) => p.id === id);
     //if (post) {
-     //post.status = "OPEN";
+    //post.status = "OPEN";
     //}
   } catch (error) {
     console.log(error.response ? error.response.data : error.message);
