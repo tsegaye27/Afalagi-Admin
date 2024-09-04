@@ -12,13 +12,12 @@
       />
 
       <select
-        v-model="filterStatus"
+        v-model="filterGender"
         class="border outline-none rounded p-2 w-1/4"
       >
-        <option value="">All Statuses</option>
-        <option value="UNDER_REVIEW">Pending</option>
-        <option value="OPEN">Approved</option>
-        <option value="REJECTED">Rejected</option>
+        <option value="">All</option>
+        <option value="MALE">Male</option>
+        <option value="FEMALE">Female</option>
       </select>
     </div>
 
@@ -109,25 +108,23 @@ onMounted(async () => {
 
 // Search and Filter States
 const searchQuery = ref("");
-const filterStatus = ref("");
+const filterGender = ref("");
 
-// Computed property for filtered posts
+// Computed property for filtered users
 const filteredUsers = computed(() => {
   return users.value.filter((user) => {
     const matchesSearch =
       user.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       user.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      user.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      user.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-    const matchesStatus =
-      filterStatus.value === "" || post.status === filterStatus.value;
+    const matchesGender =
+      filterGender.value === "" || user.gender === filterGender.value;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesGender;
   });
 });
+
 function formatDate(dateStr) {
   const dateObj = new Date(dateStr);
 

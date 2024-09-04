@@ -1,32 +1,69 @@
 <script setup>
 import { useAdminStore } from "~/stores/store";
+import { ref, onMounted, computed } from "vue";
 
 const store = useAdminStore();
 const { $axios } = useNuxtApp();
+
 const countUsers = ref(0);
 const countPosts = ref(0);
+const newUsers = ref(0);
+const genderData = ref({ maleCount: 0, femaleCount: 0 });
+const ageGroupsCount = ref({});
+const postStatusCounts = ref({});
+const missingPersonsInfo = ref({});
+const topUserLocations = ref({
+  topCountries: {},
+  topStates: {},
+  topCities: {},
+});
 
 onMounted(async () => {
   if (!store.token) {
     navigateTo("/auth/login");
   } else {
     try {
+      // Fetch users count
       const userRes = await $axios.get("/user", {
-        headers: {
-          Authorization: `Bearer ${store.token}`,
-        },
+        headers: { Authorization: `Bearer ${store.token}` },
       });
       countUsers.value = userRes.data.totalRecords;
 
+      // Fetch posts count
       const postRes = await $axios.get("/post/advanced", {
-        headers: {
-          Authorization: `Bearer ${store.token}`,
-        },
+        headers: { Authorization: `Bearer ${store.token}` },
       });
       countPosts.value = postRes.data.totalRecords;
 
-      // Fetch data for charts here
-      // Update chart data refs in LineChart and PieChart components
+      // Fetch new users count for today
+      const newUserRes = await $axios.get(
+        "/apianalytics/users?timeFrame=today"
+      );
+      newUsers.value = newUserRes.data.meta.totalUsers;
+
+      // Fetch gender count
+      const genderRes = await $axios.get(
+        "/apianalytics/users/gender?timeFrame=today"
+      );
+      genderData.value = genderRes.data.meta.gender;
+
+      // Fetch age groups count
+      const ageRes = await $axios.get("/apianalytics/users/age");
+      ageGroupsCount.value = ageRes.data.meta.ageGroupsCount;
+
+      // Fetch post status counts
+      const postStatusRes = await $axios.get("/apianalytics/posts");
+      postStatusCounts.value = postStatusRes.data.meta.statusCount;
+
+      // Fetch missing persons info
+      const missingInfoRes = await $axios.get("/apianalytics/posts/info");
+      missingPersonsInfo.value = missingInfoRes.data.meta.counts;
+
+      // Fetch top user locations
+      const topLocationRes = await $axios.get(
+        "/apianalytics/users/top-locations?limit=1"
+      );
+      topUserLocations.value = topLocationRes.data.meta;
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
     }
@@ -36,59 +73,61 @@ onMounted(async () => {
 const options = computed(() => {
   return {
     title: {
-      text: "Growth of Internet Users Worldwide (logarithmic scale)",
+      text: "User and Post Analytics",
     },
-
-    accessibility: {
-      point: {
-        valueDescriptionFormat: "{xDescription}{separator}{value} million(s)",
-      },
-    },
-
     xAxis: {
-      title: {
-        text: "Year",
-      },
-      categories: [1995, 2000, 2005, 2010, 2015, 2020, 2023],
+      categories: [
+        "Total Users",
+        "New Users Today",
+        "Male Users",
+        "Female Users",
+      ],
     },
-
     yAxis: {
-      type: "logarithmic",
       title: {
-        text: "Number of Internet Users (in millions)",
+        text: "Counts",
       },
     },
-
-    tooltip: {
-      headerFormat: "<b>{series.name}</b><br />",
-      pointFormat: "{point.y} million(s)",
-    },
-
     series: [
       {
-        name: "Internet Users",
-        keys: ["y", "color"],
+        name: "User Data",
         data: [
-          [16, "#0000ff"],
-          [361, "#8d0073"],
-          [1018, "#ba0046"],
-          [2025, "#d60028"],
-          [3192, "#eb0014"],
-          [4673, "#fb0004"],
-          [5200, "#ff0000"],
+          countUsers.value,
+          newUsers.value,
+          genderData.value.maleCount,
+          genderData.value.femaleCount,
         ],
-        color: {
-          linearGradient: {
-            x1: 0,
-            x2: 0,
-            y1: 1,
-            y2: 0,
+      },
+    ],
+  };
+});
+
+const pieOptions = computed(() => {
+  return {
+    chart: {
+      type: "pie",
+    },
+    title: {
+      text: "Post Status Distribution",
+    },
+    series: [
+      {
+        name: "Posts",
+        colorByPoint: true,
+        data: [
+          {
+            name: "Open Posts",
+            y: postStatusCounts.value.openPostsCount,
           },
-          stops: [
-            [0, "#0000ff"],
-            [1, "#ff0000"],
-          ],
-        },
+          {
+            name: "Closed Posts",
+            y: postStatusCounts.value.closedPostsCount,
+          },
+          {
+            name: "Under Review Posts",
+            y: postStatusCounts.value.underReviewPostsCount,
+          },
+        ],
       },
     ],
   };
@@ -106,19 +145,14 @@ const options = computed(() => {
       </p>
     </section>
     <section class="flex gap-8">
-      <StatCard title="New Users" :value="0" />
+      <StatCard title="New Users" :value="newUsers" />
       <StatCard title="Total Users" :value="countUsers" />
-      <StatCard title="New Posts" :value="0" />
       <StatCard title="Total Posts" :value="countPosts" />
     </section>
     <section class="mt-8">
       <div class="flex flex-wrap gap-8">
         <div class="w-full md:w-1/2">
           <highchart :options="options" />
-          <!-- <LineChart /> -->
-        </div>
-        <div class="w-full md:w-1/2">
-          <!-- <PieChart /> -->
         </div>
       </div>
     </section>

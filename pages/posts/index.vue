@@ -39,7 +39,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="post in filteredPosts" :key="post.id" class="hover:bg-gray-100">
+          <tr
+            v-for="post in filteredPosts"
+            :key="post.id"
+            class="hover:bg-gray-100"
+          >
             <td class="p-4 border-b">
               {{
                 `${post.user.Profile?.firstName} ${post.user.Profile?.lastName}`
@@ -111,8 +115,7 @@ const posts = ref([]);
 //     console.log(error.response? error.response.data : error.message);
 //   }
 // }
-
-onMounted(async () => {
+const fetchPosts = async () => {
   try {
     const res = await $axios.get("/post/advanced", {
       headers: {
@@ -124,7 +127,8 @@ onMounted(async () => {
   } catch (err) {
     console.log(err.res ? err.res.data : err.message);
   }
-});
+};
+onMounted(fetchPosts);
 
 const approvePost = async (id) => {
   console.log(id);
@@ -141,6 +145,7 @@ const approvePost = async (id) => {
     //if (post) {
     //post.status = "OPEN";
     //}
+    fetchPosts();
   } catch (error) {
     console.log(error.response ? error.response.data : error.message);
   }
@@ -160,6 +165,7 @@ const rejectPost = async (id) => {
     if (post) {
       post.status = "REJECTED";
     }
+    fetchPosts();
   } catch (error) {
     console.log(error.response ? error.response.data : error.message);
   }
@@ -182,7 +188,7 @@ const filteredPosts = computed(() => {
       post.user.Profile.firstName
         .toLowerCase()
         .includes(searchQuery.value.toLowerCase()) ||
-     post.user.Profile.middleName
+      post.user.Profile.middleName
         .toLowerCase()
         .includes(searchQuery.value.toLowerCase()) ||
       post.user.Profile.lastName

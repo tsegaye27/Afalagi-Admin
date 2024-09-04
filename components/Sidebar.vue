@@ -14,7 +14,7 @@ const logout = () => {
 </script>
 <template>
   <div
-    class="sidebar w-[15rem] h-[42rem] border-r border-[var(--secondary-color)]"
+    class="sidebar w-[15rem] h-[100vh] border-r border-[var(--secondary-color)]"
   >
     <ul class="flex flex-col items-start p-8 h-full justify-between gap-5">
       <div class="flex flex-col gap-4">
