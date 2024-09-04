@@ -62,6 +62,7 @@
                 'text-yellow-500': post.status === 'UNDER_REVIEW',
                 'text-green-500': post.status === 'OPEN',
                 'text-red-500': post.status === 'REJECTED',
+                'text-blue-500': post.status === 'CLOSED'
               }"
               class="p-4 border-b"
             >
@@ -125,6 +126,7 @@ const setStatus = (status) => {
   if (status === "OPEN") return "Approved";
   if (status === "UNDER_REVIEW") return "Pending";
   if (status === "REJECTED") return "Rejected";
+  if (status === "CLOSED") return "Closed";
 };
 
 // Search and Filter States

@@ -10,8 +10,10 @@ export default defineNuxtConfig({
     },
   },
   modules: [
+    "nuxt-highcharts",
     // "nuxt-swiper",
     // '@primevue/nuxt-module',
+
     [
       "@pinia/nuxt",
       {
@@ -23,5 +25,8 @@ export default defineNuxtConfig({
   plugins: ["~/plugins/axios.ts"],
   imports: {
     dirs: ["stores"],
+  },
+  build: {
+    transpile: ["vue-chartjs", "chart.js"],
   },
 });
