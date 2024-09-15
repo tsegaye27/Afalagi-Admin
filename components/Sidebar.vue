@@ -61,6 +61,19 @@ const logout = () => {
             <span class="flex text-[var(--primary-color)]">Files</span>
           </li>
         </nuxt-link>
+        <nuxt-link to="/success-story" class="sidebar-link">
+          <li
+            class="cursor-pointer flex gap-2 items-center hover:bg-gray-200 rounded-lg p-2 transition-all"
+          >
+            <span class="flex text-[var(--secondary-color)]">
+              <Icon
+                name="material-symbols-light:folder-copy-outline"
+                size="19px"
+              />
+            </span>
+            <span class="flex text-[var(--primary-color)]">Success-Story</span>
+          </li>
+        </nuxt-link>
         <nuxt-link to="/analytics" class="sidebar-link">
           <li
             class="cursor-pointer flex gap-2 items-center hover:bg-gray-200 rounded-lg p-2 transition-all"
