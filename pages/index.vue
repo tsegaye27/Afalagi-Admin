@@ -97,19 +97,25 @@ const userOptions = computed(() => ({
   ],
 }));
 
+const setNameFromStatus = (status) => {
+  if (status === "openPostsCount") return "Approved";
+  if (status === "underReviewPostsCount") return "Pending";
+  if (status === "rejectedPostsCount") return "Rejected";
+  if (status === "closedPostsCount") return "Closed";
+  if (status === "removedPostsCount") return "Removed";
+};
+
 const postStatusOptions = computed(() => ({
-  chart: { type: "bar" },
-  title: { text: "Post Status Distribution" },
-  xAxis: { categories: ["Open Posts", "Closed Posts", "Under Review Posts"] },
-  yAxis: { title: { text: "Counts" } },
+  chart: { type: "pie" },
+  title: { text: "Post Status" },
   series: [
     {
-      name: "Posts",
-      data: [
-        postStatusCounts.value.openPostsCount,
-        postStatusCounts.value.closedPostsCount,
-        postStatusCounts.value.underReviewPostsCount,
-      ],
+      name: "Post Status",
+      colorByPoint: true,
+      data: Object.entries(postStatusCounts.value).map(([status, count]) => ({
+        name: setNameFromStatus(status),
+        y: count,
+      })),
     },
   ],
 }));
@@ -151,11 +157,25 @@ const showChart = (chartName) => {
 
     <!-- Chart Filter Buttons -->
     <section class="flex gap-4 mb-4">
-      <button @click="showChart('user')" class="btn-primary">User Data</button>
-      <button @click="showChart('post')" class="btn-primary">
+      <button
+        @click="showChart('user')"
+        :class="activeChart === 'user' && 'bg-blue-400'"
+        class="btn-primary"
+      >
+        User Data
+      </button>
+      <button
+        @click="showChart('post')"
+        :class="activeChart === 'post' && 'bg-blue-400'"
+        class="btn-primary"
+      >
         Post Status
       </button>
-      <button @click="showChart('location')" class="btn-primary">
+      <button
+        @click="showChart('location')"
+        :class="activeChart === 'location' && 'bg-blue-400'"
+        class="btn-primary"
+      >
         Top Locations
       </button>
     </section>
