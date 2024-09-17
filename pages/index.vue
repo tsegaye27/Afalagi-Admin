@@ -1,28 +1,24 @@
 <script setup>
 import { useAdminStore } from "~/stores/store";
-import { ref, onMounted, computed } from "vue";
 
 const store = useAdminStore();
 const { $axios } = useNuxtApp();
 
+const activeChart = ref("user");
+
 const countUsers = ref(0);
-const countPosts = ref(0);
 const newUsers = ref(0);
 const genderData = ref({ maleCount: 0, femaleCount: 0 });
-const ageGroupsCount = ref({});
 const postStatusCounts = ref({});
-const missingPersonsInfo = ref({});
-const topUserLocations = ref({
-  topCountries: {},
-  topStates: {},
-  topCities: {},
-});
+const topLocations = ref({ countries: {}, cities: {} });
+
 const accessTokenCookie = useCookie("access_token");
 const refreshTokenCookie = useCookie("refresh_token");
 
-// Define the reactive property for mobile menu state
+// Define a reactive state for the mobile menu
 const isMobileMenuOpen = ref(false);
 
+// Set cookies to store
 const setCookiesToStore = () => {
   if (accessTokenCookie.value && refreshTokenCookie.value) {
     store.setToken(accessTokenCookie.value);
@@ -36,161 +32,163 @@ watchEffect(() => {
 
 onMounted(async () => {
   setCookiesToStore();
-  if (!store.token) {
+  if (setCookiesToStore() && !store.token) {
     navigateTo("/auth/login");
   } else {
     try {
-      // Fetch users count
+      // Fetch various analytics data
       const userRes = await $axios.get("/user", {
         headers: { Authorization: `Bearer ${store.token}` },
       });
-      countUsers.value = userRes.data.totalRecords;
+      countUsers.value = userRes.data.data.reduce(
+        (acc, user) => (user.Profile ? acc + 1 : acc),
+        0
+      );
+      console.log(countUsers.value);
 
-      // Fetch posts count
-      const postRes = await $axios.get("/post/advanced", {
-        headers: { Authorization: `Bearer ${store.token}` },
-      });
-      countPosts.value = postRes.data.totalRecords;
-
-      // Fetch new users count for today
       const newUserRes = await $axios.get("/analytics/users?timeFrame=today", {
         headers: { Authorization: `Bearer ${store.token}` },
       });
       newUsers.value = newUserRes.data.meta.totalUsers;
 
-      // Fetch gender count
-      const genderRes = await $axios.get(
-        "/analytics/users/gender?timeFrame=today",
-        {
-          headers: { Authorization: `Bearer ${store.token}` },
-        }
-      );
-      genderData.value = genderRes.data.meta.gender;
-
-      // Fetch age groups count
-      const ageRes = await $axios.get("/analytics/users/age", {
+      const genderRes = await $axios.get("/analytics/users/gender", {
         headers: { Authorization: `Bearer ${store.token}` },
       });
-      ageGroupsCount.value = ageRes.data.meta.ageGroupsCount;
+      genderData.value = genderRes.data.meta.gender;
 
-      // Fetch post status counts
       const postStatusRes = await $axios.get("/analytics/posts", {
         headers: { Authorization: `Bearer ${store.token}` },
       });
       postStatusCounts.value = postStatusRes.data.meta.statusCount;
 
-      // Fetch missing persons info
-      const missingInfoRes = await $axios.get("/analytics/posts/info", {
+      const locationRes = await $axios.get("/analytics/users/top-locations", {
         headers: { Authorization: `Bearer ${store.token}` },
       });
-      missingPersonsInfo.value = missingInfoRes.data.meta.counts;
-
-      // Fetch top user locations
-      const topLocationRes = await $axios.get(
-        "/analytics/users/top-locations?limit=1",
-        {
-          headers: { Authorization: `Bearer ${store.token}` },
-        }
-      );
-      topUserLocations.value = topLocationRes.data.meta;
+      topLocations.value = locationRes.data.meta;
+      console.log(locationRes.data.meta);
     } catch (error) {
       console.log(error.response ? error.response.data : error.message);
     }
   }
 });
 
-const options = computed(() => {
-  return {
-    title: {
-      text: "User and Post Analytics",
-    },
-    xAxis: {
-      categories: [
-        "Total Users",
-        "New Users Today",
-        "Male Users",
-        "Female Users",
+// Chart options
+const userOptions = computed(() => ({
+  title: { text: "User Analytics" },
+  xAxis: {
+    categories: [
+      "Total Users",
+      "New Users Today",
+      "Male Users",
+      "Female Users",
+    ],
+  },
+  yAxis: { title: { text: "Counts" } },
+  series: [
+    {
+      name: "User Data",
+      data: [
+        countUsers.value,
+        newUsers.value,
+        genderData.value.maleCount,
+        genderData.value.femaleCount,
       ],
     },
-    yAxis: {
-      title: {
-        text: "Counts",
-      },
+  ],
+}));
+
+const postStatusOptions = computed(() => ({
+  chart: { type: "bar" },
+  title: { text: "Post Status Distribution" },
+  xAxis: { categories: ["Open Posts", "Closed Posts", "Under Review Posts"] },
+  yAxis: { title: { text: "Counts" } },
+  series: [
+    {
+      name: "Posts",
+      data: [
+        postStatusCounts.value.openPostsCount,
+        postStatusCounts.value.closedPostsCount,
+        postStatusCounts.value.underReviewPostsCount,
+      ],
     },
+  ],
+}));
+
+// Pie chart for top countries
+const countryPieOptions = computed(() => {
+  const countriesData = Object.entries(topLocations.value.topCountries).map(
+    ([country, count]) => ({ name: country, y: count })
+  );
+  return {
+    chart: { type: "pie" },
+    title: { text: "Top Countries by Reports" },
     series: [
       {
-        name: "User Data",
-        data: [
-          countUsers.value,
-          newUsers.value,
-          genderData.value.maleCount,
-          genderData.value.femaleCount,
-        ],
+        name: "Countries",
+        colorByPoint: true,
+        data: countriesData,
       },
     ],
   };
 });
 
-const pieOptions = computed(() => {
-  return {
-    chart: {
-      type: "pie",
-    },
-    title: {
-      text: "Post Status Distribution",
-    },
-    series: [
-      {
-        name: "Posts",
-        colorByPoint: true,
-        data: [
-          {
-            name: "Open Posts",
-            y: postStatusCounts.value.openPostsCount,
-          },
-          {
-            name: "Closed Posts",
-            y: postStatusCounts.value.closedPostsCount,
-          },
-          {
-            name: "Under Review Posts",
-            y: postStatusCounts.value.underReviewPostsCount,
-          },
-        ],
-      },
-    ],
-  };
-});
+// Chart toggling function
+const showChart = (chartName) => {
+  activeChart.value = chartName;
+};
 </script>
 
 <template>
   <div class="flex flex-col pt-8 gap-8 w-full">
     <section>
       <p class="font-medium text-2xl">
-        Hello, Tsegaye👋
-        <span class="font-regular text-lg text-[#868686]">
-          - here is what was happening in Afalagi today
-        </span>
+        Hello, Admin 👋
+        <span class="font-regular text-lg text-[#868686]"
+          >- Here are today's statistics</span
+        >
       </p>
     </section>
-    <section class="flex gap-8">
-      <StatCard title="New Users" :value="newUsers" />
-      <StatCard title="Total Users" :value="countUsers" />
-      <StatCard title="Total Posts" :value="countPosts" />
+
+    <!-- Chart Filter Buttons -->
+    <section class="flex gap-4 mb-4">
+      <button @click="showChart('user')" class="btn-primary">User Data</button>
+      <button @click="showChart('post')" class="btn-primary">
+        Post Status
+      </button>
+      <button @click="showChart('location')" class="btn-primary">
+        Top Locations
+      </button>
     </section>
-    <section class="mt-8">
+
+    <!-- Dynamic Chart Display -->
+    <section v-if="activeChart === 'user'" class="w-full">
+      <highchart :options="userOptions" />
+    </section>
+
+    <section v-if="activeChart === 'post'" class="w-full">
+      <highchart :options="postStatusOptions" />
+    </section>
+
+    <section v-if="activeChart === 'location'" class="w-full">
       <div class="flex flex-wrap gap-8">
         <div class="w-full md:w-1/2">
-          <highchart :options="options" />
-        </div>
-      </div>
-    </section>
-    <section class="mt-8">
-      <div class="flex flex-wrap gap-8">
-        <div class="w-full md:w-1/2">
-          <highchart :options="pieOptions" />
+          <highchart :options="countryPieOptions" />
         </div>
       </div>
     </section>
   </div>
 </template>
+
+<style scoped>
+.btn-primary {
+  padding: 10px 20px;
+  background-color: #3490dc;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-primary:active {
+  background-color: #62b7fc;
+}
+</style>
