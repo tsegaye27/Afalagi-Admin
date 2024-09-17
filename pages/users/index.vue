@@ -26,6 +26,7 @@
       <table class="min-w-full bg-white border">
         <thead>
           <tr class="w-full bg-gray-200">
+            <th class="text-left p-4 border-b whitespace-nowrap">ID</th>
             <th class="text-left p-4 border-b whitespace-nowrap">First Name</th>
             <th class="text-left p-4 border-b whitespace-nowrap">
               Middle Name
@@ -37,10 +38,13 @@
         </thead>
         <tbody>
           <tr
-            v-for="user in filteredUsers"
+            v-for="(user, index) in filteredUsers"
             :key="user.id"
             class="hover:bg-gray-100"
           >
+            <td class="p-4 border-b">
+              {{ index }}
+            </td>
             <td class="p-4 border-b">
               {{ `${user.firstName}` }}
             </td>
