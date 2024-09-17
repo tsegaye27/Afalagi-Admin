@@ -71,7 +71,7 @@ const logout = () => {
                 size="19px"
               />
             </span>
-            <span class="flex text-[var(--primary-color)]">Success-Story</span>
+            <span class="flex text-[var(--primary-color)]">Story</span>
           </li>
         </nuxt-link>
         <nuxt-link to="/analytics" class="sidebar-link">
