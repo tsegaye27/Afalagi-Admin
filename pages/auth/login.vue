@@ -23,6 +23,14 @@ const handleLogin = async () => {
     });
     store.setToken(response.data.access_token);
     store.setRefreshToken(response.data.refresh_token);
+    const accessTokenCookie = useCookie("access_token");
+    const refreshTokenCookie = useCookie("refresh_token");
+    const profileCookie = useCookie("profile");
+    const verifiedCookie = useCookie("verified");
+    accessTokenCookie.value = response.data.access_token;
+    refreshTokenCookie.value = response.data.refresh_token;
+    profileCookie.value = response.data.profile;
+    verifiedCookie.value = response.data.verified;
     console.log("success");
     navigateTo("/");
   } catch (error) {

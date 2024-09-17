@@ -17,8 +17,25 @@ const topUserLocations = ref({
   topStates: {},
   topCities: {},
 });
+const accessTokenCookie = useCookie("access_token");
+const refreshTokenCookie = useCookie("refresh_token");
+
+// Define the reactive property for mobile menu state
+const isMobileMenuOpen = ref(false);
+
+const setCookiesToStore = () => {
+  if (accessTokenCookie.value && refreshTokenCookie.value) {
+    store.setToken(accessTokenCookie.value);
+    store.setRefreshToken(refreshTokenCookie.value);
+  }
+};
+
+watchEffect(() => {
+  setCookiesToStore();
+});
 
 onMounted(async () => {
+  setCookiesToStore();
   if (!store.token) {
     navigateTo("/auth/login");
   } else {
@@ -36,32 +53,44 @@ onMounted(async () => {
       countPosts.value = postRes.data.totalRecords;
 
       // Fetch new users count for today
-      const newUserRes = await $axios.get(
-        "/apianalytics/users?timeFrame=today"
-      );
+      const newUserRes = await $axios.get("/analytics/users?timeFrame=today", {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
       newUsers.value = newUserRes.data.meta.totalUsers;
 
       // Fetch gender count
       const genderRes = await $axios.get(
-        "/apianalytics/users/gender?timeFrame=today"
+        "/analytics/users/gender?timeFrame=today",
+        {
+          headers: { Authorization: `Bearer ${store.token}` },
+        }
       );
       genderData.value = genderRes.data.meta.gender;
 
       // Fetch age groups count
-      const ageRes = await $axios.get("/apianalytics/users/age");
+      const ageRes = await $axios.get("/analytics/users/age", {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
       ageGroupsCount.value = ageRes.data.meta.ageGroupsCount;
 
       // Fetch post status counts
-      const postStatusRes = await $axios.get("/apianalytics/posts");
+      const postStatusRes = await $axios.get("/analytics/posts", {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
       postStatusCounts.value = postStatusRes.data.meta.statusCount;
 
       // Fetch missing persons info
-      const missingInfoRes = await $axios.get("/apianalytics/posts/info");
+      const missingInfoRes = await $axios.get("/analytics/posts/info", {
+        headers: { Authorization: `Bearer ${store.token}` },
+      });
       missingPersonsInfo.value = missingInfoRes.data.meta.counts;
 
       // Fetch top user locations
       const topLocationRes = await $axios.get(
-        "/apianalytics/users/top-locations?limit=1"
+        "/analytics/users/top-locations?limit=1",
+        {
+          headers: { Authorization: `Bearer ${store.token}` },
+        }
       );
       topUserLocations.value = topLocationRes.data.meta;
     } catch (error) {
@@ -153,6 +182,13 @@ const pieOptions = computed(() => {
       <div class="flex flex-wrap gap-8">
         <div class="w-full md:w-1/2">
           <highchart :options="options" />
+        </div>
+      </div>
+    </section>
+    <section class="mt-8">
+      <div class="flex flex-wrap gap-8">
+        <div class="w-full md:w-1/2">
+          <highchart :options="pieOptions" />
         </div>
       </div>
     </section>

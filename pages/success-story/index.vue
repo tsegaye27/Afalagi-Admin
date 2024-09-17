@@ -16,7 +16,7 @@
         class="border outline-none rounded p-2 w-1/4"
       >
         <option value="">All Statuses</option>
-        <option value="PENDING">Pending</option>
+        <option value="UNDER_REVIEW">Pending</option>
         <option value="APPROVED">Approved</option>
         <option value="REJECTED">Rejected</option>
       </select>
@@ -53,7 +53,7 @@
             </td>
             <td
               :class="{
-                'text-yellow-500': story.status === 'PENDING',
+                'text-yellow-500': story.status === 'UNDER_REVIEW',
                 'text-green-500': story.status === 'APPROVED',
                 'text-red-500': story.status === 'REJECTED',
               }"
@@ -71,7 +71,7 @@
               </button>
               <button
                 title="Approve Story"
-                v-if="story.status === 'PENDING'"
+                v-if="story.status === 'UNDER_REVIEW'"
                 @click="approveStory(story.id)"
                 class="text-green-500 ml-4 flex justify-center p-2 items-center hover:text-green-600 rounded-full"
               >
@@ -79,7 +79,7 @@
               </button>
               <button
                 title="Reject Story"
-                v-if="story.status === 'PENDING'"
+                v-if="story.status === 'UNDER_REVIEW'"
                 @click="rejectStory(story.id)"
                 class="text-red-500 ml-4 flex justify-center p-2 items-center hover:text-red-600 rounded-full"
               >
@@ -111,11 +111,15 @@ const fetchSuccessStories = async () => {
       },
     });
     successStories.value = res.data.data;
-    console.log("success", res.data);
   } catch (err) {
-    console.log(err.res ? err.res.data : err.message);
+    if (err.response?.status === 404) {
+      console.error("API endpoint not found.");
+    } else {
+      console.error(err.response ? err.response.data : err.message);
+    }
   }
 };
+
 onMounted(fetchSuccessStories);
 
 const approveStory = async (id) => {
@@ -150,7 +154,7 @@ const rejectStory = async (id) => {
 
 const setStatus = (status) => {
   if (status === "APPROVED") return "Approved";
-  if (status === "PENDING") return "Pending";
+  if (status === "UNDER_REVIEW") return "Pending";
   if (status === "REJECTED") return "Rejected";
 };
 
