@@ -447,14 +447,15 @@ function timeAgo(date) {
                     >
                       <textarea
                         v-model="replyText"
+                        disabled
                         class="w-full p-2 ring ring-[var(--secondary-color)] outline-none bg-[var(--background-color)] text-[var(--primary-color)] rounded"
-                        rows="2"
+                        rows="1"
                         placeholder="Write your reply..."
                       ></textarea>
                       <button
                         @click="submitReply(comment.id)"
-                        :disabled="true"
-                        class="px-4 py-2 w-[8rem] bg-[#868686] text-white rounded mt-[0.5rem]"
+                        disabled
+                        class="px-4 py-2 w-[8rem] bg-[#868686] cursor-not-allowed text-white rounded mt-[0.5rem]"
                       >
                         Submit
                       </button>
@@ -518,12 +519,13 @@ function timeAgo(date) {
               <textarea
                 v-model="newComment"
                 class="w-full p-2 ring ring-[var(--secondary-color)] outline-none bg-[var(--background-color)] text-[var(--text-color)] rounded"
-                rows="2"
+                rows="1"
+                disabled
                 placeholder="Write your comment..."
               ></textarea>
               <button
                 @click="submitComment"
-                :disabled="true"
+                disabled
                 class="px-4 py-2 w-[8rem] bg-[#868686] cursor-not-allowed text-white rounded mt-[0.5rem]"
               >
                 Submit
