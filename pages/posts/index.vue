@@ -15,12 +15,11 @@
         v-model="filterStatus"
         class="border outline-none rounded p-2 w-1/4"
       >
-        <option value="">All Statuses</option>
+        <option selected value="">All</option>
         <option value="UNDER_REVIEW">Pending</option>
         <option value="OPEN">Approved</option>
         <option value="REJECTED">Rejected</option>
         <option value="CLOSED">Closed</option>
-        <option value="REMOVED">Removed</option>
       </select>
     </div>
 
@@ -29,31 +28,35 @@
       <table class="min-w-full bg-white border">
         <thead>
           <tr class="w-full bg-gray-200">
+            <th class="text-left p-4 border-b">ID</th>
             <th class="text-left p-4 border-b">Reporter</th>
             <th class="text-left p-4 border-b whitespace-nowrap">
               Missing Person
             </th>
-            <th class="text-left p-4 border-b">Date</th>
+            <th class="text-left p-4 border-b">Submission Date</th>
             <th class="text-left p-4 border-b">Status</th>
             <th class="text-left p-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="post in filteredPosts"
+            v-for="(post, index) in filteredPosts"
             :key="post.id"
             class="hover:bg-gray-100"
           >
             <td class="p-4 border-b">
+              {{ index + 1 }}
+            </td>
+            <td class="p-4 border-b">
               {{
-                `${post.user.Profile?.firstName} ${post.user.Profile?.lastName}`
+                `${post.user.Profile?.firstName} ${post.user.Profile?.middleName} ${post.user.Profile?.lastName}`
               }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
               {{ `${post.firstName} ${post.middleName} ${post.lastName}` }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
-              {{ formatDate(post.lastSeenDate) }}
+              {{ formatDate(post.createdAt) }}
             </td>
             <td
               :class="{
@@ -181,18 +184,12 @@ const filterStatus = ref("");
 const filteredPosts = computed(() => {
   return posts.value.filter((post) => {
     const matchesSearch =
-      post.user.Profile.firstName
+      `${post.user.Profile?.firstName} ${post.user.Profile?.middleName} ${post.user.Profile?.lastName}`
         .toLowerCase()
         .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.middleName
+      `${post.firstName} ${post.middleName} ${post.lastName}`
         .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.user.Profile.lastName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      post.firstName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.middleName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      post.lastName.toLowerCase().includes(searchQuery.value.toLowerCase());
+        .includes(searchQuery.value.toLowerCase());
 
     const matchesStatus =
       filterStatus.value === "" || post.status === filterStatus.value;
@@ -222,7 +219,8 @@ function formatDate(dateStr) {
   const month = monthNames[dateObj.getMonth()];
   const day = String(dateObj.getDate()).padStart(2, "0");
   const year = dateObj.getFullYear();
+  const time = dateObj.toLocaleTimeString();
 
-  return `${month} ${day}, ${year}`;
+  return `${time}, ${month} ${day}, ${year}`;
 }
 </script>
