@@ -108,13 +108,9 @@ const store = useAdminStore();
 const { $axios } = useNuxtApp();
 const posts = ref([]);
 
-// const viewDetails = async(id)=>{
-//   try{
-//     const res = await $axios.get()
-//   } catch(error){
-//     console.log(error.response? error.response.data : error.message);
-//   }
-// }
+const viewDetails = (postId) => {
+  navigateTo(`/posts/${postId}`);
+};
 const fetchPosts = async () => {
   try {
     const res = await $axios.get("/post/advanced", {

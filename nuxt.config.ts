@@ -3,12 +3,14 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
+
   modules: [
     "nuxt-highcharts",
     // "nuxt-swiper",
@@ -22,11 +24,16 @@ export default defineNuxtConfig({
     ],
     "@nuxt/icon",
   ],
+
   plugins: ["~/plugins/axios.ts"],
+
   imports: {
     dirs: ["stores"],
   },
+
   build: {
     transpile: ["vue-chartjs", "chart.js"],
   },
+
+  compatibilityDate: "2024-09-16",
 });

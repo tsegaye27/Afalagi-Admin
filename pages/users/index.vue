@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <h1 class="text-2xl font-bold mb-4">Users</h1>
+    <h1 class="text-2xl font-bold mb-4">Users(with Profile)</h1>
 
     <!-- Search and Filter -->
     <div class="flex justify-between items-center mb-4">
@@ -56,28 +56,6 @@
             <td class="p-4 border-b whitespace-nowrap">
               {{ `${user.country}` }}
             </td>
-            <!-- <td class="p-4 border-b flex">
-              <button
-                class="text-blue-500 flex items-center p-2 hover:text-blue-600 rounded-full"
-              >
-                <Icon name="mage:preview" size="20px" />
-              </button>
-              <button
-                v-if="post.status === 'UNDER_REVIEW'"
-                class="text-green-500 ml-4 flex justify-center p-2 items-center hover:text-green-600 rounded-full"
-              >
-                <Icon name="material-symbols:check-rounded" size="20px" />
-              </button>
-              <button
-                v-if="post.status === 'UNDER_REVIEW'"
-                class="text-red-500 ml-4 flex justify-center p-2 items-center hover:text-red-600 rounded-full"
-              >
-                <Icon
-                  name="material-symbols:delete-outline-rounded"
-                  size="20px"
-                />
-              </button>
-            </td> -->
           </tr>
         </tbody>
       </table>

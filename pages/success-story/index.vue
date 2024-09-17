@@ -28,7 +28,7 @@
         <thead>
           <tr class="w-full bg-gray-200">
             <th class="text-left p-4 border-b">Reporter</th>
-            <th class="text-left p-4 border-b">Story Title</th>
+            <th class="text-left p-4 border-b">Title</th>
             <th class="text-left p-4 border-b">Date</th>
             <th class="text-left p-4 border-b">Status</th>
             <th class="text-left p-4 border-b">Actions</th>
