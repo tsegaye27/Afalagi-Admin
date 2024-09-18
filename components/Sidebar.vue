@@ -2,7 +2,22 @@
 import { useAdminStore } from "~/stores/store";
 
 const store = useAdminStore();
+const accessTokenCookie = useCookie("access_token");
+const refreshTokenCookie = useCookie("refresh_token");
+
+const setCookiesToStore = () => {
+  if (accessTokenCookie.value && refreshTokenCookie.value) {
+    store.setToken(accessTokenCookie.value);
+    store.setRefreshToken(refreshTokenCookie.value);
+  }
+};
+
+watchEffect(() => {
+  setCookiesToStore();
+});
+
 onMounted(() => {
+  setCookiesToStore();
   if (!store.token) navigateTo("/auth/login");
 });
 
