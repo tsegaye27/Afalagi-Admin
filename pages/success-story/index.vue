@@ -17,12 +17,11 @@
       >
         <option value="">All Statuses</option>
         <option value="UNDER_REVIEW">Pending</option>
-        <option value="APPROVED">Approved</option>
+        <option value="OPEN">Approved</option>
         <option value="REJECTED">Rejected</option>
       </select>
     </div>
 
-    <!-- Success Stories Table -->
     <div class="overflow-auto">
       <table class="min-w-full bg-white border">
         <thead>
@@ -49,12 +48,12 @@
               {{ story.title }}
             </td>
             <td class="p-4 border-b whitespace-nowrap">
-              {{ formatDate(story.dateSubmitted) }}
+              {{ formatDate(story.createdAt) }}
             </td>
             <td
               :class="{
                 'text-yellow-500': story.status === 'UNDER_REVIEW',
-                'text-green-500': story.status === 'APPROVED',
+                'text-green-500': story.status === 'OPEN',
                 'text-red-500': story.status === 'REJECTED',
               }"
               class="p-4 border-b"
@@ -125,7 +124,7 @@ onMounted(fetchSuccessStories);
 const approveStory = async (id) => {
   try {
     const res = await $axios.post(`/success-stories/status/${id}`, null, {
-      params: { status: "APPROVED" },
+      params: { status: "OPEN" },
       headers: {
         Authorization: `Bearer ${store.token}`,
       },
@@ -153,7 +152,7 @@ const rejectStory = async (id) => {
 };
 
 const setStatus = (status) => {
-  if (status === "APPROVED") return "Approved";
+  if (status === "OPEN") return "Approved";
   if (status === "UNDER_REVIEW") return "Pending";
   if (status === "REJECTED") return "Rejected";
 };
