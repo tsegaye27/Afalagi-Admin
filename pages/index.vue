@@ -68,32 +68,6 @@ onMounted(async () => {
   }
 });
 
-// Chart options
-// const userOptions = computed(() => ({
-//   title: { text: "User Analytics" },
-//   xAxis: {
-//     categories: [
-//       "Total Users",
-//       "New Users Today",
-//       "Male Users",
-//       "Female Users",
-//     ],
-//   },
-//   yAxis: { title: { text: "Counts" } },
-//   series: [
-//     {
-//       name: "User Data",
-//       data: [
-//         countUsers.value,
-//         newUsers.value,
-//         genderData.value.maleCount,
-//         genderData.value.femaleCount,
-//       ],
-//     },
-//   ],
-// }));
-
-//make the userOptions with bar chart
 const userOptions = computed(() => ({
   chart: { type: "bar" },
   title: { text: "User Analytics" },
