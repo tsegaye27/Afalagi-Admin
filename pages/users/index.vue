@@ -43,7 +43,7 @@
             class="hover:bg-gray-100"
           >
             <td class="p-4 border-b">
-              {{ index }}
+              {{ index + 1 }}
             </td>
             <td class="p-4 border-b">
               {{ `${user.firstName}` }}
