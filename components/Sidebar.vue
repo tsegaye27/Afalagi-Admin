@@ -89,26 +89,6 @@ const logout = () => {
             <span class="flex text-[var(--primary-color)]">Story</span>
           </li>
         </nuxt-link>
-        <nuxt-link to="/analytics" class="sidebar-link">
-          <li
-            class="cursor-pointer flex gap-2 items-center hover:bg-gray-200 rounded-lg p-2 transition-all"
-          >
-            <span class="flex text-[var(--secondary-color)]">
-              <Icon name="iconoir:reports" size="19px" />
-            </span>
-            <span class="flex text-[var(--primary-color)]">Analytics</span>
-          </li>
-        </nuxt-link>
-        <nuxt-link to="/activity" class="sidebar-link">
-          <li
-            class="cursor-pointer flex gap-2 items-center hover:bg-gray-200 rounded-lg p-2 transition-all"
-          >
-            <span class="flex text-[var(--secondary-color)]">
-              <Icon name="ph:activity-light" size="19px" />
-            </span>
-            <span class="flex text-[var(--primary-color)]">Activity</span>
-          </li>
-        </nuxt-link>
       </div>
       <div class="flex flex-col gap-4">
         <nuxt-link to="/profile" class="sidebar-link">
