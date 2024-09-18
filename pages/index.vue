@@ -15,10 +15,6 @@ const topLocations = ref({ countries: {}, cities: {} });
 const accessTokenCookie = useCookie("access_token");
 const refreshTokenCookie = useCookie("refresh_token");
 
-// Define a reactive state for the mobile menu
-const isMobileMenuOpen = ref(false);
-
-// Set cookies to store
 const setCookiesToStore = () => {
   if (accessTokenCookie.value && refreshTokenCookie.value) {
     store.setToken(accessTokenCookie.value);
@@ -181,15 +177,15 @@ const showChart = (chartName) => {
     </section>
 
     <!-- Dynamic Chart Display -->
-    <section v-if="activeChart === 'user'" class="w-full">
+    <section v-if="activeChart === 'user'" class="w-1/2">
       <highchart :options="userOptions" />
     </section>
 
-    <section v-if="activeChart === 'post'" class="w-full">
+    <section v-if="activeChart === 'post'">
       <highchart :options="postStatusOptions" />
     </section>
 
-    <section v-if="activeChart === 'location'" class="w-full">
+    <section v-if="activeChart === 'location'">
       <div class="flex flex-wrap gap-8">
         <div class="w-full md:w-1/2">
           <highchart :options="countryPieOptions" />
