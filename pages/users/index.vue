@@ -21,8 +21,12 @@
       </select>
     </div>
 
+    <div v-if="filteredUsers.length === 0" class="text-center">
+      <p class="text-[var(--primary-color)] my-8 font-medium">No users found</p>
+    </div>
+
     <!-- Posts Table -->
-    <div class="overflow-auto">
+    <div v-else class="overflow-auto">
       <table class="min-w-full bg-white border">
         <thead>
           <tr class="w-full bg-gray-200">
