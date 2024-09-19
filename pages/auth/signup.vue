@@ -102,7 +102,6 @@ const handleSignup = async () => {
           Signup
         </button>
       </form>
-      Already have an account? <nuxt-link to="/auth/login">Login</nuxt-link>
     </div>
   </div>
 </template>
