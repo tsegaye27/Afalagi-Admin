@@ -22,7 +22,13 @@
       </select>
     </div>
 
-    <div class="overflow-auto">
+    <div v-if="filteredStories.length === 0" class="text-center">
+      <p class="text-[var(--primary-color)] my-8 font-medium">
+        No stories found
+      </p>
+    </div>
+
+    <div v-else class="overflow-auto">
       <table class="min-w-full bg-white border">
         <thead>
           <tr class="w-full bg-gray-200">
