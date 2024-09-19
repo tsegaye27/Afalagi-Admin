@@ -124,15 +124,13 @@ const fetchPosts = async () => {
       },
     });
     posts.value = res.data.data;
-    console.log("success", res.data);
   } catch (err) {
-    console.log(err.res ? err.res.data : err.message);
+    console.error(err.res ? err.res.data : err.message);
   }
 };
 onMounted(fetchPosts);
 
 const approvePost = async (id) => {
-  console.log(id);
   try {
     const res = await $axios.post(`/post/status/${id}`, null, {
       params: { status: "OPEN" },
@@ -140,7 +138,6 @@ const approvePost = async (id) => {
         Authorization: `Bearer ${store.token}`,
       },
     });
-    console.log("success", res);
     // Update the post status locally
     const post = posts.value.find((p) => p.id === id);
     //if (post) {
@@ -148,7 +145,7 @@ const approvePost = async (id) => {
     //}
     fetchPosts();
   } catch (error) {
-    console.log(error.response ? error.response.data : error.message);
+    console.error(error.response ? error.response.data : error.message);
   }
 };
 
@@ -160,7 +157,6 @@ const rejectPost = async (id) => {
         Authorization: `Bearer ${store.token}`,
       },
     });
-    console.log("success", res);
     // Update the post status locally
     const post = posts.value.find((p) => p.id === id);
     if (post) {
@@ -168,7 +164,7 @@ const rejectPost = async (id) => {
     }
     fetchPosts();
   } catch (error) {
-    console.log(error.response ? error.response.data : error.message);
+    console.error(error.response ? error.response.data : error.message);
   }
 };
 

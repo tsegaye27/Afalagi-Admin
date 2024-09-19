@@ -86,9 +86,8 @@ onMounted(async () => {
       },
     });
     users.value = res.data.data;
-    console.log("success", res.data);
   } catch (err) {
-    console.log(err.res ? err.res.data : err.message);
+    console.error(err.res ? err.res.data : err.message);
   }
 });
 
