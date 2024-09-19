@@ -45,7 +45,7 @@ onMounted(async () => {
       const newUserRes = await $axios.get("/analytics/users?timeFrame=today", {
         headers: { Authorization: `Bearer ${store.token}` },
       });
-      newUsers.value = newUserRes.data.meta.totalUsers;
+      newUsers.value = newUserRes.data.meta.usersWithProfile;
 
       const genderRes = await $axios.get("/analytics/users/gender", {
         headers: { Authorization: `Bearer ${store.token}` },
