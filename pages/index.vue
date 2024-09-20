@@ -11,6 +11,7 @@ const newUsers = ref(0);
 const genderData = ref({ maleCount: 0, femaleCount: 0 });
 const postStatusCounts = ref({});
 const topLocations = ref({ countries: {}, cities: {} });
+const missingLocations = ref({ countries: {}, cities: {} });
 
 const accessTokenCookie = useCookie("access_token");
 const refreshTokenCookie = useCookie("refresh_token");
@@ -24,6 +25,18 @@ const setCookiesToStore = () => {
 
 watchEffect(() => {
   setCookiesToStore();
+});
+
+onMounted(async () => {
+  try {
+    const res = await $axios.get("/analytics/posts/locations", {
+      headers: { Authorization: `Bearer ${store.token}` },
+    });
+    missingLocations.value.countries = res.data.meta.mostCaseCountries;
+    missingLocations.value.cities = res.data.meta.mostCaseCities;
+  } catch (error) {
+    console.log(error.response ? error.response.data : error.message);
+  }
 });
 
 onMounted(async () => {
@@ -123,12 +136,63 @@ const countryPieOptions = computed(() => {
   );
   return {
     chart: { type: "pie" },
-    title: { text: "Top Countries by Reports" },
+    title: { text: "Top Countries by Users" },
     series: [
       {
         name: "Countries",
         colorByPoint: true,
         data: countriesData,
+      },
+    ],
+  };
+});
+// Pie chart for top cities
+const cityPieOptions = computed(() => {
+  const citiesData = Object.entries(topLocations.value.topCities).map(
+    ([city, count]) => ({ name: city, y: count })
+  );
+  return {
+    chart: { type: "pie" },
+    title: { text: "Top Cities by Users" },
+    series: [
+      {
+        name: "Cities",
+        colorByPoint: true,
+        data: citiesData,
+      },
+    ],
+  };
+});
+// Pie chart for most case country
+const mostCaseCountryPieOptions = computed(() => {
+  const mostCaseCountriesData = Object.entries(
+    missingLocations.value.countries
+  ).map(([country, count]) => ({ name: country, y: count }));
+  return {
+    chart: { type: "pie" },
+    title: { text: "Top Country by Reports" },
+    series: [
+      {
+        name: "Countries",
+        colorByPoint: true,
+        data: mostCaseCountriesData,
+      },
+    ],
+  };
+});
+// Pie chart for most case city
+const mostCaseCityPieOptions = computed(() => {
+  const mostCaseCitiesData = Object.entries(missingLocations.value.cities).map(
+    ([city, count]) => ({ name: city, y: count })
+  );
+  return {
+    chart: { type: "pie" },
+    title: { text: "Top City by Reports" },
+    series: [
+      {
+        name: "Cities",
+        colorByPoint: true,
+        data: mostCaseCitiesData,
       },
     ],
   };
@@ -174,6 +238,13 @@ const showChart = (chartName) => {
       >
         Top Locations
       </button>
+      <button
+        @click="showChart('missingLocation')"
+        :class="activeChart === 'missingLocation' && 'bg-blue-400'"
+        class="btn-primary"
+      >
+        Reported Locations
+      </button>
     </section>
 
     <!-- Dynamic Chart Display -->
@@ -189,6 +260,28 @@ const showChart = (chartName) => {
       <div class="flex flex-wrap gap-8">
         <div class="w-full md:w-1/2">
           <highchart :options="countryPieOptions" />
+        </div>
+      </div>
+    </section>
+
+    <section v-if="activeChart === 'location'">
+      <div class="flex flex-wrap gap-8">
+        <div class="w-full md:w-1/2">
+          <highchart :options="cityPieOptions" />
+        </div>
+      </div>
+    </section>
+    <section v-if="activeChart === 'missingLocation'">
+      <div class="flex flex-wrap gap-8">
+        <div class="w-full md:w-1/2">
+          <highchart :options="mostCaseCountryPieOptions" />
+        </div>
+      </div>
+    </section>
+    <section v-if="activeChart === 'missingLocation'">
+      <div class="flex flex-wrap gap-8">
+        <div class="w-full md:w-1/2">
+          <highchart :options="mostCaseCityPieOptions" />
         </div>
       </div>
     </section>
