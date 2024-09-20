@@ -127,14 +127,23 @@ const fetchSuccessStories = async () => {
 
 onMounted(fetchSuccessStories);
 
+const viewDetails = (storyId) => {
+  navigateTo(`/success-story/${storyId}`);
+};
+
 const approveStory = async (id) => {
   try {
-    const res = await $axios.post(`/success-stories/status/${id}`, null, {
-      params: { status: "OPEN" },
-      headers: {
-        Authorization: `Bearer ${store.token}`,
+    const res = await $axios.patch(
+      `/success-story/status/${id}`,
+      {
+        status: "OPEN",
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${store.token}`,
+        },
+      }
+    );
     console.log("success", res);
     fetchSuccessStories();
   } catch (error) {
@@ -144,12 +153,17 @@ const approveStory = async (id) => {
 
 const rejectStory = async (id) => {
   try {
-    const res = await $axios.post(`/success-stories/status/${id}`, null, {
-      params: { status: "REJECTED" },
-      headers: {
-        Authorization: `Bearer ${store.token}`,
+    const res = await $axios.patch(
+      `/success-story/status/${id}`,
+      {
+        status: "REJECTED",
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${store.token}`,
+        },
+      }
+    );
     console.log("success", res);
     fetchSuccessStories();
   } catch (error) {
