@@ -103,7 +103,7 @@ const showToast = (message, type) => {
     showToaster.value = false;
   }, 5000);
 };
-// Fetch the dynamic story based on storyId
+
 const route = useRoute();
 const fetchStoryDetails = async () => {
   try {
